@@ -1,13 +1,8 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import viteCompression from 'vite-plugin-compression';
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
-    viteCompression({ algorithm: 'brotliCompress', ext: '.br', compressionOptions: { level: 11 } }),
-  ],
+  plugins: [tailwindcss()],
   server: {
     port: 5173,
   },
