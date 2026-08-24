@@ -26,6 +26,13 @@ export default class WorldScene extends Phaser.Scene {
     this._exitObject     = null;
   }
 
+  preload() {
+    // Lazy load World BGM — hanya saat enter game, bukan di BootScene (hemat 5.6MB initial)
+    if (!this.cache.audio.exists('bgm_world')) {
+      this.load.audio('bgm_world', '/assets/audio/bgm/world.wav');
+    }
+  }
+
   create() {
     const playerName = this.registry.get('playerName') || 'Guest';
     const muted      = this.registry.get('muted') || SaveManager.loadMutePreference();
@@ -44,16 +51,19 @@ export default class WorldScene extends Phaser.Scene {
     // Collision: player ↔ wall layer
     this.physics.add.collider(this._player, this._collisionLayer);
 
-    // ── Camera — adaptive zoom for mobile ────────────────────────────
+    // ── Camera — adaptive zoom for mobile (estetik, karakter besar di HP) ─
     const isMobileCam = window.innerWidth < 768 || /Mobile|Android|iPhone/i.test(navigator.userAgent);
-    const camZoom = isMobileCam ? 2 : ZOOM;
+    const camZoom = window.innerWidth < 480 ? 4 : isMobileCam ? 3.6 : ZOOM;
     this.cameras.main.setZoom(camZoom);
+    // smooth follow lerp 0.12 = 12% per frame — mulus di HP & desktop
     this.cameras.main.startFollow(this._player, true, 0.12, 0.12);
-    this.cameras.main.setBounds(
-      0, 0,
-      MAP_WIDTH  * TILE_SIZE,
-      MAP_HEIGHT * TILE_SIZE,
-    );
+    this.cameras.main.setBounds(0, 0, MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE);
+    // update zoom saat rotate/resize (HP putar layar)
+    this.scale.on('resize', () => {
+      const m = window.innerWidth < 768;
+      const z = window.innerWidth < 480 ? 4 : m ? 3.6 : ZOOM;
+      this.cameras.main.setZoom(z);
+    });
 
     // ── Interactive objects ───────────────────────────────────────────
     this._interactiveObjects = [];

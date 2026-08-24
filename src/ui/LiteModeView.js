@@ -235,8 +235,8 @@ const LiteModeView = {
               <article class="project-card">
                 <div class="project-card-header">
                   ${p.thumbnail ? `
-                    <img src="${p.thumbnail}" alt="${p.title} thumbnail" loading="lazy"
-                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    <img src="${p.thumbnail}" alt="${p.title} thumbnail" loading="lazy" decoding="async" fetchpriority="low"
+                      onerror="if(this.src.endsWith('.webp')){this.src=this.src.replace('.webp','.png')}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}"
                     />
                     <span style="display:none; font-size:2.5rem;">${ ['🛒','🤖','🎮','🚀','💡','📊'][i % 6] }</span>
                   ` : `${ ['🛒','🤖','🎮','🚀','💡','📊'][i % 6] }`

@@ -41,7 +41,7 @@ export default class AboutModal extends BaseModal {
         ">
           <!-- Avatar -->
           ${profile.avatar ? `
-          <img src="${profile.avatar}" alt="${profile.name}"
+          <img src="${profile.avatar}" alt="${profile.name}" loading="lazy" decoding="async"
             style="
               width:80px; height:80px; border-radius:50%; flex-shrink:0;
               object-fit:cover;
@@ -49,7 +49,7 @@ export default class AboutModal extends BaseModal {
               box-shadow:0 0 24px rgba(124,58,237,0.4);
               background:#1e1b4b;
             "
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            onerror="if(this.src.endsWith('.webp')){this.src=this.src.replace('.webp','.jpg')}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}"
           />
           <div style="
             width:80px; height:80px; border-radius:50%; flex-shrink:0;

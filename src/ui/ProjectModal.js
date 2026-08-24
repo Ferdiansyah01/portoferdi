@@ -47,8 +47,8 @@ export default class ProjectModal extends BaseModal {
         <!-- Thumbnail (if available) -->
         ${proj.thumbnail ? `
         <div style="height:180px; overflow:hidden; background:#0f172a; border-bottom:1px solid #1e293b;">
-          <img src="${proj.thumbnail}" alt="${proj.title}" style="width:100%;height:100%;object-fit:cover;display:block;"
-            onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#1e1b4b,#312e81)\\'>🖥️</div>'"
+          <img src="${proj.thumbnail}" alt="${proj.title}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"
+            onerror="if(this.src.endsWith('.webp')){this.src=this.src.replace('.webp','.png')}else{this.style.display='none'; this.parentElement.innerHTML='<div style=\\'height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#1e1b4b,#312e81)\\'>🖥️</div>'}"
           />
         </div>` : ''}
 

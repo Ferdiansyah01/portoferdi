@@ -17,9 +17,9 @@ export default class BootScene extends Phaser.Scene {
     this.load.on('complete', () => this._onComplete());
 
     // ── Audio — DevQuest Original Soundtrack ────────────────────────
-    // Chiptune RPG BGM cocok biar ga garing: menu upbeat + world lo-fi
+    // Optimasi: hanya preload menu + SFX (2-3MB) biar initial load cepat
+    // bgm_world (5.6MB) di-lazy load saat WorldScene preload (pas klik Start View)
     this.load.audio('bgm_menu',     '/assets/audio/bgm/menu.wav');
-    this.load.audio('bgm_world',    '/assets/audio/bgm/world.wav');
     this.load.audio('sfx_interact', '/assets/audio/sfx/interact.wav');
     this.load.audio('sfx_open',     '/assets/audio/sfx/open.wav');
     this.load.audio('sfx_close',    '/assets/audio/sfx/close.wav');

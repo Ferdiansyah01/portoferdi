@@ -60,10 +60,10 @@ async function renderBootShell() {
 
   shell.remove();
 
-  // ── Phaser Game Config — adaptive for mobile ────────────────────────
+  // ── Phaser Game Config — adaptive for mobile (zoom-in biar karakter besar & estetik) ─
   const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
-  const mobileZoom = isMobile ? 2 : gameConfig.ZOOM;
-  // mobile pakai viewport penuh biar canvas pas di layar
+  // HP <480px: zoom 4 (karakter 64px), tablet <768: 3.6, desktop: 3 — biar in-game tidak kekecilan
+  const mobileZoom = window.innerWidth < 480 ? 4 : isMobile ? 3.6 : gameConfig.ZOOM;
   const baseW = gameConfig.MAP_WIDTH  * gameConfig.TILE_SIZE * mobileZoom;
   const baseH = gameConfig.MAP_HEIGHT * gameConfig.TILE_SIZE * mobileZoom;
 
