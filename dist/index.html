@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0f0f1a" />
+
+    <!-- SEO -->
+    <title>Ferdi Developer — Interactive Portfolio</title>
+    <meta name="description" content="Explore Muhammad Ferdiansyah's interactive portfolio as RPG adventure. Discover projects, skills, and contact info through pixel-art world." />
+    <meta name="keywords" content="Ferdi Developer, Muhammad Ferdiansyah, developer portfolio, game portfolio, RPG portfolio, interactive portfolio, full stack developer" />
+    <link rel="canonical" href="https://devquest.vercel.app" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://devquest.vercel.app" />
+    <meta property="og:title" content="Ferdi Developer — Interactive Portfolio" />
+    <meta property="og:description" content="Explore Ferdi Developer's RPG adventure portfolio. Discover projects, skills, and contact info." />
+    <meta property="og:image" content="/assets/og-preview.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ferdi Developer — Interactive Portfolio" />
+    <meta name="twitter:description" content="Explore Ferdi Developer's interactive RPG portfolio." />
+    <meta name="twitter:image" content="/assets/og-preview.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Google Fonts — Pixel-art friendly + clean UI font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <script type="module" crossorigin src="/assets/index-BcV2Zblr.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Daly7bic.css">
+  </head>
+  <body>
+    <!-- App root — LiteMode renders here; Game launcher overlays this -->
+    <div id="app">
+      <!-- Content injected by JS -->
+    </div>
+
+    <!-- Phaser game canvas container — hidden until game starts -->
+    <div id="game-container" class="hidden"></div>
+
+    <!-- Global modal portal -->
+    <div id="modal-portal"></div>
+
+    <!-- Interaction indicator (Press E) -->
+    <div id="interaction-indicator" class="hidden">
+      <span class="pixel-font text-xs text-yellow-300">Press E</span>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="hidden"></div>
+
+  </body>
+</html>

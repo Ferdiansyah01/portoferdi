@@ -1,0 +1,16 @@
+{
+  "name": "Muhammad Ferdiansyah",
+  "role": "Full Stack Developer",
+  "tagline": "I craft digital experiences from pixel to production.",
+  "bio": "Hello! I am an Informatics student on a journey to become a full-stack developer. Currently, I am actively learning and exploring modern web development, ranging from designing user interfaces to building server-side logic (backend). I love turning creative ideas into functional applications and am constantly challenged to explore new technologies.",
+  "avatar": "/assets/profile.jpg",
+  "resumeUrl": "/assets/resume.pdf",
+  "email": "dianferdi01@gmail.com",
+  "location": "Batujajar, Indonesia",
+  "available": true,
+  "socials": [
+    { "platform": "GitHub",   "url": "https://github.com/Ferdiansyah01",    "icon": "github" },
+    { "platform": "LinkedIn", "url": "https://www.linkedin.com/in/muhammad-ferdiansyah-44979a3a3/","icon": "linkedin" },
+    { "platform": "Instagram",  "url": "https://www.instagram.com/fr_dnsyh?igsi=ajNob3R6ZnRscXh4",   "icon": "instagram" }
+  ]
+}

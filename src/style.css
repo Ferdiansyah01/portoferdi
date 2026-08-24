@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────── */
+:root {
+  --color-bg:         #0f0f1a;
+  --color-surface:    #1a1a2e;
+  --color-surface2:   #16213e;
+  --color-border:     #2a2a4a;
+  --color-accent:     #7c3aed;
+  --color-accent2:    #06b6d4;
+  --color-gold:       #fbbf24;
+  --color-green:      #10b981;
+  --color-text:       #e2e8f0;
+  --color-muted:      #94a3b8;
+
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-ui:    'Inter', sans-serif;
+}
+
+/* ─── Global Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Allow scroll only when LiteMode is active — fix: game canvas was covering content (only navbar visible due to z-index 50) */
+html.lite-mode,
+body.lite-mode {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  height: auto;
+  min-height: 100vh;
+}
+body.lite-mode #game-container {
+  display: none !important;
+  pointer-events: none;
+  z-index: -1;
+}
+body.lite-mode #app {
+  position: relative;
+  z-index: 1;
+  display: block;
+  overflow: visible;
+  height: auto;
+  min-height: 100vh;
+}
+body.lite-mode #modal-portal {
+  z-index: 300;
+}
+
+/* ─── Game Container ─────────────────────────────────────────────────── */
+#game-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+#game-container canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ─── App Root (LiteMode host) ───────────────────────────────────────── */
+#app {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* ─── Interaction Indicator (Press E) ───────────────────────────────── */
+#interaction-indicator {
+  position: fixed;
+  z-index: 100;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+#interaction-indicator::after {
+  content: '▼';
+  font-size: 8px;
+  color: #fbbf24;
+  animation: bounce-arrow 0.7s ease-in-out infinite alternate;
+}
+
+/* ─── Toast ──────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: var(--color-green);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  animation: toast-in 0.3s ease;
+}
+
+/* ─── Modal Portal ───────────────────────────────────────────────────── */
+#modal-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+#modal-portal > * {
+  pointer-events: all;
+}
+
+/* ─── Typography Utility ─────────────────────────────────────────────── */
+.pixel-font {
+  font-family: var(--font-pixel);
+  line-height: 1.8;
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 3px;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce-arrow {
+  from { transform: translateY(0); }
+  to   { transform: translateY(4px); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes pixel-flicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--color-accent); }
+  50%       { box-shadow: 0 0 24px var(--color-accent), 0 0 48px var(--color-accent2); }
+}
+
+@keyframes scanline {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+/* ─── Glassmorphism Card ─────────────────────────────────────────────── */
+.glass-card {
+  background: rgba(26, 26, 46, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+/* ─── Tech Chip ──────────────────────────────────────────────────────── */
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(124, 58, 237, 0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  white-space: nowrap;
+}
+
+/* ─── Skill Badge ────────────────────────────────────────────────────── */
+.skill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: var(--color-surface2);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.skill-badge:hover {
+  border-color: var(--color-accent2);
+  transform: translateY(-1px);
+}
+
+/* ─── Button variants ────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.btn-secondary:hover {
+  border-color: var(--color-accent2);
+  background: rgba(6, 182, 212, 0.08);
+  transform: translateY(-1px);
+}
+.btn-secondary:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-muted);
+  transition: color 0.2s;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.btn-ghost:hover { color: var(--color-text); background: rgba(255,255,255,0.06); }
+
+/* ─── Modal Base ─────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fade-in 0.2s ease;
+  z-index: 200;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slide-up 0.25s ease;
+}
+
+/* ─── Scrollable modal content ───────────────────────────────────────── */
+.modal-panel::-webkit-scrollbar { width: 4px; }
+.modal-panel::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 2px; }
+
+/* ─── HUD ────────────────────────────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── Virtual D-Pad ──────────────────────────────────────────────────── */
+#virtual-dpad {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 150;
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 2px;
+}
+
+#virtual-dpad button {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+#virtual-dpad button:active {
+  background: rgba(124, 58, 237, 0.5);
+}
+
+#btn-action {
+  position: fixed;
+  bottom: 3rem;
+  right: 2rem;
+  z-index: 150;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid rgba(196,181,253,0.4);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+  -webkit-tap-highlight-color: transparent;
+}
+#btn-action:active {
+  background: #6d28d9;
+  transform: scale(0.93);
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "category": "Frontend",
+    "color": "#7c3aed",
+    "items": [
+      { "name": "JavaScript", "level": "intermediate", "icon": "⚡" },
+      { "name": "Vue.js",     "level": "intermediate", "icon": "💚" },
+      { "name": "Tailwind",   "level": "intermediate", "icon": "🌊" },
+      { "name": "HTML/CSS",   "level": "intermediate", "icon": "🎨" }
+    ]
+  },
+  {
+    "category": "Backend",
+    "color": "#06b6d4",
+    "items": [
+      { "name": "PHP",     "level": "intermediate", "icon": "🐘" },
+      { "name": "Python",  "level": "intermediate", "icon": "🐍" },
+      { "name": "C++",     "level": "intermediate", "icon": "⚙️" },
+      { "name": "Node.js", "level": "intermediate", "icon": "🟢" }
+    ]
+  },
+  {
+    "category": "Database",
+    "color": "#10b981",
+    "items": [
+      { "name": "PostgreSQL", "level": "intermediate", "icon": "🐘" },
+      { "name": "Supabase",   "level": "intermediate", "icon": "⚡" },
+      { "name": "MySQL",      "level": "intermediate", "icon": "🐬" }
+    ]
+  },
+  {
+    "category": "Tools",
+    "color": "#f59e0b",
+    "items": [
+      { "name": "Vite",   "level": "intermediate", "icon": "⚡" },
+      { "name": "Vercel", "level": "intermediate", "icon": "▲" },
+      { "name": "Figma",  "level": "intermediate", "icon": "🎨" },
+      { "name": "GitHub", "level": "intermediate", "icon": "🐙" }
+    ]
+  }
+]
