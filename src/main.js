@@ -62,10 +62,12 @@ async function renderBootShell() {
 
   // ── Phaser Game Config — adaptive for mobile (zoom-in biar karakter besar & estetik) ─
   const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
-  // HP <480px: zoom 4 (karakter 64px), tablet <768: 3.6, desktop: 3 — biar in-game tidak kekecilan
-  const mobileZoom = window.innerWidth < 480 ? 4 : isMobile ? 3.6 : gameConfig.ZOOM;
-  const baseW = gameConfig.MAP_WIDTH  * gameConfig.TILE_SIZE * mobileZoom;
-  const baseH = gameConfig.MAP_HEIGHT * gameConfig.TILE_SIZE * mobileZoom;
+  // HP <480px: zoom 4.5 (karakter 72px), tablet 3.8, desktop 3 — biar in-game tidak kekecilan & terlihat jelas
+  const mobileZoom = window.innerWidth < 480 ? 4.5 : isMobile ? 3.8 : gameConfig.ZOOM;
+  // PENTING: jangan pakai MAP*ZOOM sebagai base — bikin map kepet scale kecil di HP
+  // Pakai viewport sebagai base biar FIT tidak mengecilkan world
+  const baseW = isMobile ? Math.min(window.innerWidth, 420) : 800;
+  const baseH = isMobile ? Math.min(window.innerHeight, 760) : 600;
 
   const config = {
     type: Phaser.AUTO,
@@ -78,7 +80,6 @@ async function renderBootShell() {
       height:     baseH,
       min: { width: 320,  height: 240 },
       max: { width: 2560, height: 1440 },
-      // jaga aspect di mobile notch & keyboard
       expandParent: false,
     },
     physics: {

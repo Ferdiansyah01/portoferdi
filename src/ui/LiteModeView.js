@@ -376,6 +376,7 @@ const LiteModeView = {
     // bersihkan sisa HUD game biar tidak overlay di mobile lite
     document.getElementById('hud')?.remove();
     document.getElementById('virtual-dpad')?.remove();
+    document.getElementById('virtual-joystick')?.remove();
     document.getElementById('btn-action')?.remove();
     document.getElementById('btn-jump')?.remove();
     document.getElementById('interaction-indicator')?.classList.add('hidden');

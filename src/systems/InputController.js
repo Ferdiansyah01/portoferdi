@@ -25,7 +25,8 @@ export default class InputController {
     this._escKey     = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this._prevJumpState = false;
 
-    // Virtual D-pad state
+    // Virtual joystick state (analog -1..1)
+    this._joyX = 0; this._joyY = 0;
     this._vDir = { up: false, down: false, left: false, right: false };
     this._vAction = false;
 
@@ -33,30 +34,21 @@ export default class InputController {
     this._actionConsumed = false;
     this._prevActionState = false;
 
-    // Detect touch device and show D-pad
+    // Detect touch device and show joystick
     this._isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (this._isTouchDevice) {
-      this._buildVirtualDPad();
+      this._buildJoystick();
     }
   }
 
-  _buildVirtualDPad() {
-    const dpad = document.createElement('div');
-    dpad.id = 'virtual-dpad';
+  _buildJoystick() {
+    // Joystick base
+    const joy = document.createElement('div');
+    joy.id = 'virtual-joystick';
+    joy.innerHTML = `<div id="joy-stick"></div>`;
+    document.body.appendChild(joy);
 
-    dpad.innerHTML = `
-      <button id="dpad-empty-tl"></button>
-      <button id="dpad-up"    style="grid-column:2;grid-row:1" title="Up">▲</button>
-      <button id="dpad-empty-tr"></button>
-      <button id="dpad-left"  style="grid-column:1;grid-row:2" title="Left">◀</button>
-      <button id="dpad-empty-c" style="grid-column:2;grid-row:2;background:rgba(255,255,255,0.04);border-radius:8px;"></button>
-      <button id="dpad-right" style="grid-column:3;grid-row:2" title="Right">▶</button>
-      <button id="dpad-empty-bl"></button>
-      <button id="dpad-down"  style="grid-column:2;grid-row:3" title="Down">▼</button>
-      <button id="dpad-empty-br"></button>
-    `;
-
-    document.body.appendChild(dpad);
+    const stick = document.getElementById('joy-stick');
 
     const actionBtn = document.createElement('button');
     actionBtn.id = 'btn-action';
@@ -78,29 +70,60 @@ export default class InputController {
     document.body.appendChild(jumpBtn);
     this._jumpBtn = jumpBtn;
 
-    // Bind D-pad buttons
-    const dirs = ['up', 'down', 'left', 'right'];
-    dirs.forEach((dir) => {
-      const btn = document.getElementById(`dpad-${dir}`);
-      if (!btn) return;
-      const setDir = (val) => { this._vDir[dir] = val; };
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); setDir(true); });
-      btn.addEventListener('touchend',   (e) => { e.preventDefault(); setDir(false); });
-      btn.addEventListener('mousedown',  () => setDir(true));
-      btn.addEventListener('mouseup',    () => setDir(false));
-      btn.addEventListener('mouseleave', () => setDir(false));
-    });
+    // Joystick logic — analog stick
+    const baseR = 52; // radius
+    const maxDist = 36;
+    let active = false;
+    let touchId = null;
 
-    // Action button (E)
-    actionBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this._vAction = true; });
-    actionBtn.addEventListener('touchend',   (e) => { e.preventDefault(); this._vAction = false; });
+    const getCenter = () => {
+      const r = joy.getBoundingClientRect();
+      return { x: r.left + r.width/2, y: r.top + r.height/2 };
+    };
+    const setStick = (dx, dy) => {
+      const dist = Math.hypot(dx, dy);
+      const clamped = Math.min(dist, maxDist);
+      const ang = Math.atan2(dy, dx);
+      const cx = dist > 0 ? Math.cos(ang) * clamped : 0;
+      const cy = dist > 0 ? Math.sin(ang) * clamped : 0;
+      stick.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+      // normalize -1..1
+      this._joyX = clamped > 8 ? cx / maxDist : 0;
+      this._joyY = clamped > 8 ? cy / maxDist : 0;
+      // also set vDir for compat
+      this._vDir.up = this._joyY < -0.3; this._vDir.down = this._joyY > 0.3;
+      this._vDir.left = this._joyX < -0.3; this._vDir.right = this._joyX > 0.3;
+    };
+    const reset = () => {
+      stick.style.transform = 'translate(-50%, -50%)';
+      this._joyX = 0; this._joyY = 0;
+      this._vDir = { up:false, down:false, left:false, right:false };
+    };
+
+    const onStart = (x,y,id) => { active=true; touchId=id; const c=getCenter(); setStick(x-c.x, y-c.y); };
+    const onMove = (x,y,id) => { if(!active || (id!==null && id!==touchId)) return; const c=getCenter(); setStick(x-c.x, y-c.y); };
+    const onEnd = (id) => { if(id!==null && id!==touchId) return; active=false; touchId=null; reset(); };
+
+    joy.addEventListener('touchstart', (e)=>{ if(e.cancelable) e.preventDefault(); const t=e.changedTouches[0]; onStart(t.clientX,t.clientY,t.identifier); }, {passive:false});
+    joy.addEventListener('touchmove', (e)=>{ if(e.cancelable) e.preventDefault(); const t=[...e.changedTouches].find(t=>t.identifier===touchId)||e.changedTouches[0]; if(t) onMove(t.clientX,t.clientY,t.identifier); }, {passive:false});
+    joy.addEventListener('touchend', (e)=>{ if(e.cancelable) e.preventDefault(); const t=e.changedTouches[0]; onEnd(t.identifier); }, {passive:false});
+    joy.addEventListener('touchcancel', (e)=>{ const t=e.changedTouches[0]; onEnd(t?.identifier); });
+    // mouse fallback for testing di desktop
+    joy.addEventListener('mousedown', (e)=> onStart(e.clientX,e.clientY,null));
+    window.addEventListener('mousemove', (e)=> onMove(e.clientX,e.clientY,null));
+    window.addEventListener('mouseup', ()=> onEnd(null));
+
+    // Action button (E) — fix Intervention: cek cancelable
+    const safePrevent = (e)=>{ if(e.cancelable) e.preventDefault(); };
+    actionBtn.addEventListener('touchstart', (e) => { safePrevent(e); this._vAction = true; }, {passive:false});
+    actionBtn.addEventListener('touchend',   (e) => { safePrevent(e); this._vAction = false; }, {passive:false});
     actionBtn.addEventListener('mousedown',  () => { this._vAction = true; });
     actionBtn.addEventListener('mouseup',    () => { this._vAction = false; });
 
-    // Jump button (Space) — biar ga monoton cuma jalan
+    // Jump button (Space)
     this._vJump = false;
-    jumpBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this._vJump = true; });
-    jumpBtn.addEventListener('touchend',   (e) => { e.preventDefault(); this._vJump = false; });
+    jumpBtn.addEventListener('touchstart', (e) => { safePrevent(e); this._vJump = true; }, {passive:false});
+    jumpBtn.addEventListener('touchend',   (e) => { safePrevent(e); this._vJump = false; }, {passive:false});
     jumpBtn.addEventListener('mousedown',  () => { this._vJump = true; });
     jumpBtn.addEventListener('mouseup',    () => { this._vJump = false; });
     jumpBtn.addEventListener('mouseleave', () => { this._vJump = false; });
@@ -112,10 +135,14 @@ export default class InputController {
   }
 
   /**
-   * @returns {{ x: number, y: number }} — components are -1, 0, or 1
+   * @returns {{ x: number, y: number }} — components are -1..1 (analog joystick)
    */
   getDirection() {
     if (this._isTyping()) return { x: 0, y: 0 };
+    // Joystick analog prioritaskan di mobile
+    if (this._isTouchDevice && (Math.abs(this._joyX) > 0 || Math.abs(this._joyY) > 0)) {
+      return { x: this._joyX, y: this._joyY };
+    }
     const up    = this._cursors.up.isDown    || this._wasd.up.isDown    || this._vDir.up;
     const down  = this._cursors.down.isDown  || this._wasd.down.isDown  || this._vDir.down;
     const left  = this._cursors.left.isDown  || this._wasd.left.isDown  || this._vDir.left;
@@ -163,6 +190,7 @@ export default class InputController {
 
   destroy() {
     document.getElementById('virtual-dpad')?.remove();
+    document.getElementById('virtual-joystick')?.remove();
     document.getElementById('btn-action')?.remove();
     document.getElementById('btn-jump')?.remove();
   }

@@ -51,18 +51,20 @@ export default class WorldScene extends Phaser.Scene {
     // Collision: player ↔ wall layer
     this.physics.add.collider(this._player, this._collisionLayer);
 
-    // ── Camera — adaptive zoom for mobile (estetik, karakter besar di HP) ─
+    // ── Camera — adaptive zoom for mobile (estetik, karakter besar & jelas di HP) ─
     const isMobileCam = window.innerWidth < 768 || /Mobile|Android|iPhone/i.test(navigator.userAgent);
-    const camZoom = window.innerWidth < 480 ? 4 : isMobileCam ? 3.6 : ZOOM;
+    const camZoom = window.innerWidth < 480 ? 4.5 : isMobileCam ? 3.8 : ZOOM;
     this.cameras.main.setZoom(camZoom);
-    // smooth follow lerp 0.12 = 12% per frame — mulus di HP & desktop
+    // smooth follow lerp 0.12 = 12% per frame — mulus di HP & desktop (pakai lerp biar tidak patah)
     this.cameras.main.startFollow(this._player, true, 0.12, 0.12);
     this.cameras.main.setBounds(0, 0, MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE);
-    // update zoom saat rotate/resize (HP putar layar)
-    this.scale.on('resize', () => {
+    // update zoom & viewport saat rotate/resize
+    this.scale.on('resize', (gameSize) => {
       const m = window.innerWidth < 768;
-      const z = window.innerWidth < 480 ? 4 : m ? 3.6 : ZOOM;
+      const z = window.innerWidth < 480 ? 4.5 : m ? 3.8 : ZOOM;
       this.cameras.main.setZoom(z);
+      // sesuaikan game size biar tidak stretch
+      if (m && gameSize) this.cameras.main.setViewport(0,0, gameSize.width, gameSize.height);
     });
 
     // ── Interactive objects ───────────────────────────────────────────
@@ -629,6 +631,7 @@ export default class WorldScene extends Phaser.Scene {
     // bersihkan DOM HUD — supaya tidak kebawa ke MainMenu (penyebab hang)
     document.getElementById('hud')?.remove();
     document.getElementById('virtual-dpad')?.remove();
+    document.getElementById('virtual-joystick')?.remove();
     document.getElementById('btn-action')?.remove();
     document.getElementById('btn-jump')?.remove();
     document.getElementById('interaction-indicator')?.classList.add('hidden');

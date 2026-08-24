@@ -334,7 +334,7 @@ body.lite-mode #modal-portal {
 }
 #hud > * { pointer-events: all; }
 
-/* ─── Virtual D-Pad ──────────────────────────────────────────────────── */
+/* ─── Virtual D-Pad (legacy) ─────────────────────────────────────────── */
 #virtual-dpad {
   position: fixed;
   bottom: max(1rem, env(safe-area-inset-bottom));
@@ -361,6 +361,44 @@ body.lite-mode #modal-portal {
 }
 #virtual-dpad button:active {
   background: rgba(124, 58, 237, 0.5);
+}
+
+/* ─── Virtual Joystick (mobile) ──────────────────────────────────────── */
+#virtual-joystick {
+  position: fixed;
+  bottom: max(1.2rem, env(safe-area-inset-bottom));
+  left: max(1.2rem, env(safe-area-inset-left));
+  z-index: 150;
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+#virtual-joystick::before {
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,0.12);
+  pointer-events: none;
+}
+#joy-stick {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 44px; height: 44px;
+  margin-left: -22px; margin-top: -22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  border: 2px solid rgba(196,181,253,0.6);
+  box-shadow: 0 4px 16px rgba(124,58,237,0.5);
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s linear;
+  pointer-events: none;
 }
 
 #btn-action {
@@ -410,6 +448,12 @@ body.lite-mode #modal-portal {
     bottom: max(0.5rem, env(safe-area-inset-bottom));
     left: max(0.5rem, env(safe-area-inset-left));
   }
+  #virtual-joystick {
+    width: 96px; height: 96px;
+    bottom: max(0.8rem, env(safe-area-inset-bottom));
+    left: max(0.8rem, env(safe-area-inset-left));
+  }
+  #joy-stick { width: 38px; height: 38px; margin-left: -19px; margin-top: -19px; }
   #btn-action {
     width: 48px; height: 48px; font-size: 0.8rem;
     bottom: max(1rem, env(safe-area-inset-bottom));
@@ -463,6 +507,8 @@ body.lite-mode #modal-portal {
     grid-template-rows: repeat(3, 34px);
     gap: 1px;
   }
+  #virtual-joystick { width: 88px; height: 88px; }
+  #joy-stick { width: 36px; height: 36px; margin-left: -18px; margin-top: -18px; }
   #btn-action { width: 44px; height: 44px; }
   #btn-jump { width: 40px !important; height: 40px !important; right: 4.2rem !important; }
 }

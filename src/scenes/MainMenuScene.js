@@ -22,6 +22,7 @@ export default class MainMenuScene extends Phaser.Scene {
     // Clean any leftover HUD/exit icon from previous World — cegah kebawa
     document.getElementById('hud')?.remove();
     document.getElementById('virtual-dpad')?.remove();
+    document.getElementById('virtual-joystick')?.remove();
     document.getElementById('btn-action')?.remove();
     document.getElementById('btn-jump')?.remove();
     document.getElementById('interaction-indicator')?.classList.add('hidden');
