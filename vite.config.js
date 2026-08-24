@@ -9,10 +9,13 @@ export default defineConfig({
   build: {
     target: 'esnext',
     outDir: 'dist',
+    // Phaser 1.48MB wajar >500k — naikkan limit biar warning hilang
+    chunkSizeWarningLimit: 1600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          phaser: ['phaser'],
+        manualChunks(id) {
+          if (id.includes('node_modules/phaser')) return 'phaser';
+          if (id.includes('node_modules')) return 'vendor';
         },
       },
     },

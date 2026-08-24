@@ -24,14 +24,29 @@ const LiteModeView = {
           background: var(--color-bg, #0f0f1a);
           color: var(--color-text, #e2e8f0);
           min-height: 100vh;
+          min-height: 100dvh;
+          overscroll-behavior: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .lite-nav {
           position: sticky; top: 0; z-index: 50;
           background: rgba(15,15,26,0.9); backdrop-filter: blur(16px);
           border-bottom: 1px solid #1e293b;
           padding: 0 2rem;
+          padding-top: env(safe-area-inset-top);
           display: flex; align-items: center; justify-content: space-between;
           height: 60px;
+        }
+        @media (max-width: 768px) {
+          .lite-nav { padding: 0 1rem; height: 54px; }
+          .lite-logo { font-size: 10px; }
+          #lite-hero { min-height: auto; padding-top: 1rem; }
+          .hero-name { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
+          .lite-section { padding: 2.5rem 1rem !important; }
+          .projects-grid { grid-template-columns: 1fr !important; }
+          .contact-grid { grid-template-columns: 1fr !important; }
+          .hero-actions { flex-direction: column; }
+          .hero-actions a { text-align: center; justify-content: center; }
         }
         .lite-logo {
           font-family: 'Press Start 2P', monospace;
@@ -358,12 +373,36 @@ const LiteModeView = {
   },
 
   _bindEvents() {
-    // FIX: Phaser InputController captures WASD+E+Space globally — disable di lite mode
-    // biar Send a Message bisa ketik asdwe & spasi normal
+    // bersihkan sisa HUD game biar tidak overlay di mobile lite
+    document.getElementById('hud')?.remove();
+    document.getElementById('virtual-dpad')?.remove();
+    document.getElementById('btn-action')?.remove();
+    document.getElementById('btn-jump')?.remove();
+    document.getElementById('interaction-indicator')?.classList.add('hidden');
+    // pause Phaser biar hemat baterai di mobile
+    try { window.__devquest?.scene?.pause('MainMenuScene'); } catch {}
+    try { window.__devquest?.scene?.pause('WorldScene'); } catch {}
+    try { window.__devquest?.scene?.pause('UIScene'); } catch {}
+
+    // FIX: Phaser InputController captures WASD+E+Space + touch — disable di lite mode
+    // biar Send a Message bisa ketik & scroll touchpad/mouse pad lancar
     try {
       const game = window.__devquest;
-      if (game?.input?.keyboard) game.input.keyboard.enabled = false;
-      game?.scene?.scenes?.forEach(s => { if (s.input?.keyboard) s.input.keyboard.enabled = false; });
+      if (game?.input) {
+        if (game.input.keyboard) game.input.keyboard.enabled = false;
+        if (game.input.mouse) game.input.mouse.enabled = false;
+        if (game.input.touch) game.input.touch.enabled = false;
+      }
+      game?.scene?.scenes?.forEach(s => {
+        if (s.input?.keyboard) s.input.keyboard.enabled = false;
+        if (s.input?.mouse) s.input.mouse.enabled = false;
+        if (s.input?.touch) s.input.touch.enabled = false;
+      });
+      // paksa browser boleh scroll
+      document.documentElement.style.overscrollBehavior = 'auto';
+      document.body.style.overscrollBehavior = 'auto';
+      document.documentElement.style.touchAction = 'auto';
+      document.body.style.touchAction = 'auto';
     } catch {}
     // stopPropagation biar Phaser tidak preventDefault saat ngetik
     const stopCapture = (el) => {

@@ -44,8 +44,10 @@ export default class WorldScene extends Phaser.Scene {
     // Collision: player ↔ wall layer
     this.physics.add.collider(this._player, this._collisionLayer);
 
-    // ── Camera ───────────────────────────────────────────────────────
-    this.cameras.main.setZoom(ZOOM);
+    // ── Camera — adaptive zoom for mobile ────────────────────────────
+    const isMobileCam = window.innerWidth < 768 || /Mobile|Android|iPhone/i.test(navigator.userAgent);
+    const camZoom = isMobileCam ? 2 : ZOOM;
+    this.cameras.main.setZoom(camZoom);
     this.cameras.main.startFollow(this._player, true, 0.12, 0.12);
     this.cameras.main.setBounds(
       0, 0,
@@ -348,17 +350,19 @@ export default class WorldScene extends Phaser.Scene {
   _createAtmosphere() {
     const w = MAP_WIDTH * TILE_SIZE;
     const h = MAP_HEIGHT * TILE_SIZE;
+    const isMobile = window.innerWidth < 768;
 
     // Vignette overlay (fixed to camera)
-    const vig = this.add.graphics().setScrollFactor(0).setDepth(100).setAlpha(0.35);
-    // Top/bottom gradients
+    const vig = this.add.graphics().setScrollFactor(0).setDepth(100).setAlpha(isMobile ? 0.2 : 0.35);
     vig.fillGradientStyle(0x0f0f1a, 0x0f0f1a, 0x000000, 0x000000, 0.45);
     vig.fillRect(-400, -300, w + 800, 180);
     vig.fillGradientStyle(0x000000, 0x000000, 0x0f0f1a, 0x0f0f1a, 0.45);
     vig.fillRect(-400, h - 100, w + 800, 180);
-    // Subtle scanlines (static overlay)
-    for (let y = 0; y < h; y += 6) {
-      this.add.rectangle(w/2, y, w, 1, 0xffffff, 0.015).setDepth(99);
+    // Scanlines — skip on mobile for perf
+    if (!isMobile) {
+      for (let y = 0; y < h; y += 6) {
+        this.add.rectangle(w/2, y, w, 1, 0xffffff, 0.015).setDepth(99);
+      }
     }
     // Ambient light bloom per zone — soft glow blobs
     const blooms = [
@@ -369,27 +373,31 @@ export default class WorldScene extends Phaser.Scene {
     ];
     blooms.forEach(b => {
       const c = this.add.circle(b.x * TILE_SIZE, b.y * TILE_SIZE, 90, b.color, b.alpha).setDepth(2).setBlendMode(Phaser.BlendModes.ADD);
-      this.tweens.add({ targets: c, alpha: b.alpha * 1.6, scale: 1.08, duration: 2500 + Math.random()*1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+      if (!isMobile) this.tweens.add({ targets: c, alpha: b.alpha * 1.6, scale: 1.08, duration: 2500 + Math.random()*1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     });
 
-    // Camera subtle breathing zoom
-    this.tweens.add({
-      targets: this.cameras.main,
-      zoom: ZOOM * 1.03,
-      duration: 4000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+    // Camera subtle breathing zoom — disable on mobile (mual & perf)
+    if (!isMobile) {
+      this.tweens.add({
+        targets: this.cameras.main,
+        zoom: ZOOM * 1.03,
+        duration: 4000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+      });
+    }
   }
 
   // ── Ambient Particles — fireflies, dust, floating code ───────────────
   _createAmbientParticles() {
     const w = MAP_WIDTH * TILE_SIZE;
     const h = MAP_HEIGHT * TILE_SIZE;
+    const isMobile = window.innerWidth < 768;
 
-    // Fireflies / dust
-    for (let i = 0; i < 22; i++) {
+    // Fireflies / dust — kurangi di mobile
+    const fireflyCount = isMobile ? 8 : 22;
+    for (let i = 0; i < fireflyCount; i++) {
       const x = Phaser.Math.Between(10, w - 10);
       const y = Phaser.Math.Between(10, h - 10);
       const p = this.add.circle(x, y, Phaser.Math.FloatBetween(1, 2.2), 0xfbbf24, Phaser.Math.FloatBetween(0.3, 0.7)).setDepth(7).setBlendMode(Phaser.BlendModes.ADD);
@@ -401,7 +409,7 @@ export default class WorldScene extends Phaser.Scene {
         duration: Phaser.Math.Between(4000, 8000),
         yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: i * 120,
       });
-      this.tweens.add({
+      if (!isMobile) this.tweens.add({
         targets: p,
         scale: 1.6,
         duration: 1200,
@@ -409,33 +417,36 @@ export default class WorldScene extends Phaser.Scene {
       });
     }
 
-    // Floating code snippets (like MainMenu but world-space)
-    const codes = ['</>', '{ }', '01', '=>', 'npm', 'git', 'vue', 'php', '< />'];
-    codes.forEach((txt, i) => {
-      const x = Phaser.Math.Between(20, w - 20);
-      const y = Phaser.Math.Between(20, h - 20);
-      const t = this.add.text(x, y, txt, {
-        fontFamily: "'Press Start 2P', monospace",
-        fontSize: '5px',
-        color: '#2a2a4a',
-      }).setOrigin(0.5).setDepth(3).setAlpha(0.35);
-      this.tweens.add({
-        targets: t,
-        y: y - 16,
-        alpha: 0.12,
-        duration: 3000 + i * 250,
-        yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: i * 200,
+    // Floating code snippets — skip di mobile
+    if (!isMobile) {
+      const codes = ['</>', '{ }', '01', '=>', 'npm', 'git', 'vue', 'php', '< />'];
+      codes.forEach((txt, i) => {
+        const x = Phaser.Math.Between(20, w - 20);
+        const y = Phaser.Math.Between(20, h - 20);
+        const t = this.add.text(x, y, txt, {
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: '5px',
+          color: '#2a2a4a',
+        }).setOrigin(0.5).setDepth(3).setAlpha(0.35);
+        this.tweens.add({
+          targets: t,
+          y: y - 16,
+          alpha: 0.12,
+          duration: 3000 + i * 250,
+          yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: i * 200,
+        });
+        this.tweens.add({
+          targets: t,
+          angle: Phaser.Math.Between(-8, 8),
+          duration: 2000 + i * 300,
+          yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+        });
       });
-      this.tweens.add({
-        targets: t,
-        angle: Phaser.Math.Between(-8, 8),
-        duration: 2000 + i * 300,
-        yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
-      });
-    });
+    }
 
-    // Twinkling stars over PROJECTS dark floor
-    for (let i = 0; i < 12; i++) {
+    // Twinkling stars — kurangi di mobile
+    const starCount = isMobile ? 5 : 12;
+    for (let i = 0; i < starCount; i++) {
       const x = Phaser.Math.Between(ZONES.PROJECTS.x * TILE_SIZE + 10, (ZONES.PROJECTS.x + ZONES.PROJECTS.w) * TILE_SIZE - 10);
       const y = Phaser.Math.Between(ZONES.PROJECTS.y * TILE_SIZE + 20, (ZONES.PROJECTS.y + ZONES.PROJECTS.h) * TILE_SIZE - 20);
       const s = this.add.circle(x, y, 0.8, 0xffffff, 0.9).setDepth(4);
@@ -685,7 +696,8 @@ export default class WorldScene extends Phaser.Scene {
 
   // ── Device Capability Check ───────────────────────────────────────────
   _checkDeviceCapability() {
-    const isLowEnd = navigator.hardwareConcurrency < 4 || window.innerWidth < 480;
+    const cores = navigator.hardwareConcurrency || 4;
+    const isLowEnd = cores < 4 || window.innerWidth < 480 || /Android.*Chrome\/[.0-9]*\s/.test(navigator.userAgent);
     if (!isLowEnd) return;
 
     const banner = document.createElement('div');

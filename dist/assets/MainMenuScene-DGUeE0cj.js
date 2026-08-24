@@ -1,4 +1,4 @@
-import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfig-D5w6vaLC.js";import{p as d,s as f,c as k,v as E,a as x,b as w}from"./index-BcV2Zblr.js";import{p as I,s as B,A as l}from"./AudioManager-CmC_a3V4.js";import"./phaser-0YPJO2g1.js";const C={render(o){o.innerHTML=this._buildHTML(),this._bindEvents()},_buildHTML(){return`
+import{P as u}from"./phaser-DGZayPUC.js";import{SCENE_KEYS as y}from"./gameConfig-D5w6vaLC.js";import{p as d,s as f,c as k,v as E,a as h,b as w}from"./index-C_-2Pg1M.js";import{p as I,s as B,A as l}from"./AudioManager-CmC_a3V4.js";const _={render(n){n.innerHTML=this._buildHTML(),this._bindEvents()},_buildHTML(){return`
       <style>
         /* LiteMode scoped styles */
         #lite-root {
@@ -6,14 +6,29 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
           background: var(--color-bg, #0f0f1a);
           color: var(--color-text, #e2e8f0);
           min-height: 100vh;
+          min-height: 100dvh;
+          overscroll-behavior: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .lite-nav {
           position: sticky; top: 0; z-index: 50;
           background: rgba(15,15,26,0.9); backdrop-filter: blur(16px);
           border-bottom: 1px solid #1e293b;
           padding: 0 2rem;
+          padding-top: env(safe-area-inset-top);
           display: flex; align-items: center; justify-content: space-between;
           height: 60px;
+        }
+        @media (max-width: 768px) {
+          .lite-nav { padding: 0 1rem; height: 54px; }
+          .lite-logo { font-size: 10px; }
+          #lite-hero { min-height: auto; padding-top: 1rem; }
+          .hero-name { font-size: clamp(1.8rem, 8vw, 2.5rem) !important; }
+          .lite-section { padding: 2.5rem 1rem !important; }
+          .projects-grid { grid-template-columns: 1fr !important; }
+          .contact-grid { grid-template-columns: 1fr !important; }
+          .hero-actions { flex-direction: column; }
+          .hero-actions a { text-align: center; justify-content: center; }
         }
         .lite-logo {
           font-family: 'Press Start 2P', monospace;
@@ -198,25 +213,25 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
             A selection of projects I'm proud of. Each one taught me something new.
           </p>
           <div class="projects-grid">
-            ${I.map((o,e)=>`
+            ${I.map((n,e)=>`
               <article class="project-card">
                 <div class="project-card-header">
-                  ${o.thumbnail?`
-                    <img src="${o.thumbnail}" alt="${o.title} thumbnail" loading="lazy"
+                  ${n.thumbnail?`
+                    <img src="${n.thumbnail}" alt="${n.title} thumbnail" loading="lazy"
                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                     />
                     <span style="display:none; font-size:2.5rem;">${["🛒","🤖","🎮","🚀","💡","📊"][e%6]}</span>
                   `:`${["🛒","🤖","🎮","🚀","💡","📊"][e%6]}`}
                 </div>
                 <div class="project-card-body">
-                  <h3 class="project-card-title">${o.title}</h3>
-                  <p class="project-card-desc">${o.shortDescription}</p>
+                  <h3 class="project-card-title">${n.title}</h3>
+                  <p class="project-card-desc">${n.shortDescription}</p>
                   <div class="project-chips">
-                    ${o.techStack.slice(0,4).map(t=>`<span class="tech-chip">${t}</span>`).join("")}
+                    ${n.techStack.slice(0,4).map(o=>`<span class="tech-chip">${o}</span>`).join("")}
                   </div>
                   <div class="project-links">
-                    ${o.githubUrl?`<a href="${o.githubUrl}" target="_blank" rel="noopener" class="project-link project-link-github">GitHub</a>`:""}
-                    ${o.demoUrl?`<a href="${o.demoUrl}"   target="_blank" rel="noopener" class="project-link project-link-demo">Live Demo</a>`:""}
+                    ${n.githubUrl?`<a href="${n.githubUrl}" target="_blank" rel="noopener" class="project-link project-link-github">GitHub</a>`:""}
+                    ${n.demoUrl?`<a href="${n.demoUrl}"   target="_blank" rel="noopener" class="project-link project-link-demo">Live Demo</a>`:""}
                   </div>
                 </div>
               </article>
@@ -229,14 +244,14 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
           <p class="lite-section-label">◆ SKILLS</p>
           <h2 class="lite-section-title">My Toolkit</h2>
           <div class="skills-grid">
-            ${B.map(o=>`
+            ${B.map(n=>`
               <div>
-                <div class="skill-category-title" style="color:${o.color};">
-                  <span style="width:8px;height:8px;border-radius:2px;background:${o.color};display:inline-block;"></span>
-                  ${o.category}
+                <div class="skill-category-title" style="color:${n.color};">
+                  <span style="width:8px;height:8px;border-radius:2px;background:${n.color};display:inline-block;"></span>
+                  ${n.category}
                 </div>
                 <div class="skill-items">
-                  ${o.items.map(e=>`
+                  ${n.items.map(e=>`
                     <span class="skill-badge">
                       <span>${e.icon}</span>
                       <span>${e.name}</span>
@@ -272,8 +287,8 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
                 ">📋 Copy Email</button>
               </div>
 
-              ${d.socials.map(o=>`
-                <a href="${o.url}" target="_blank" rel="noopener" style="
+              ${d.socials.map(n=>`
+                <a href="${n.url}" target="_blank" rel="noopener" style="
                   padding:14px 16px; border-radius:12px;
                   background:#1a1a2e; border:1px solid #1e293b;
                   color:#94a3b8; text-decoration:none; font-size:0.875rem;
@@ -281,8 +296,8 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
                   transition:all 0.2s;
                 " onmouseover="this.style.borderColor='#7c3aed';this.style.color='#e2e8f0'"
                    onmouseout="this.style.borderColor='#1e293b';this.style.color='#94a3b8'">
-                   ${o.platform==="GitHub"?"🐙":o.platform==="LinkedIn"?"💼":o.platform==="Instagram"?"📸":"🐦"}
-                  ${o.platform}
+                   ${n.platform==="GitHub"?"🐙":n.platform==="LinkedIn"?"💼":n.platform==="Instagram"?"📸":"🐦"}
+                  ${n.platform}
                 </a>
               `).join("")}
             </div>
@@ -335,7 +350,7 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
         </footer>
         <audio id="lite-bgm" src="/assets/audio/bgm/world.wav" loop preload="auto" style="display:none"></audio>
       </div>
-    `},_bindEvents(){try{const n=window.__devquest;n?.input?.keyboard&&(n.input.keyboard.enabled=!1),n?.scene?.scenes?.forEach(r=>{r.input?.keyboard&&(r.input.keyboard.enabled=!1)})}catch{}const o=n=>{n&&["keydown","keyup","keypress"].forEach(r=>{n.addEventListener(r,a=>a.stopPropagation())})};o(document.getElementById("lite-contact-name")),o(document.getElementById("lite-contact-email")),o(document.getElementById("lite-contact-msg")),o(document.getElementById("player-name-input"));const e=document.getElementById("lite-bgm"),t=document.getElementById("lite-bgm-toggle"),c=document.getElementById("lite-bgm-vol");if(e){const n=localStorage.getItem("devquest_muted")==="true";e.volume=(c?.value||30)/100,e.muted=n,t&&(t.textContent=n?"🔇 BGM: OFF":"🔊 BGM: ON");const r=()=>{localStorage.getItem("devquest_muted")!=="true"&&e.play().catch(()=>{})};setTimeout(r,800),window.addEventListener("click",r,{once:!0}),t?.addEventListener("click",()=>{e.muted=!e.muted,localStorage.setItem("devquest_muted",e.muted),t.textContent=e.muted?"🔇 BGM: OFF":"🔊 BGM: ON",e.muted||e.play().catch(()=>{})}),c?.addEventListener("input",a=>{e.volume=a.target.value/100,e.muted&&e.volume>0&&(e.muted=!1,localStorage.setItem("devquest_muted","false"),t.textContent="🔊 BGM: ON")})}document.getElementById("lite-back-game-btn")?.addEventListener("click",()=>{document.body.classList.remove("lite-mode"),document.documentElement.classList.remove("lite-mode"),document.body.style.overflow="hidden";try{document.getElementById("lite-bgm")?.pause()}catch{}window.location.reload()}),document.getElementById("lite-copy-email")?.addEventListener("click",async function(){try{await navigator.clipboard.writeText(d.email),this.textContent="✅ Copied!",this.style.background="rgba(16,185,129,0.2)",this.style.borderColor="rgba(16,185,129,0.5)",this.style.color="#34d399",f("Email copied! 📋","#10b981"),setTimeout(()=>{this.innerHTML="📋 Copy Email",this.style.background="rgba(251,191,36,0.1)",this.style.borderColor="rgba(251,191,36,0.3)",this.style.color="#fbbf24"},2e3)}catch{const n=document.createElement("textarea");n.value=d.email,document.body.appendChild(n),n.select(),document.execCommand("copy"),n.remove(),f("Email copied! 📋","#10b981")}});const i=document.getElementById("lite-contact-msg"),s=document.getElementById("lite-char-count");i&&s&&i.addEventListener("input",()=>{s.textContent=`${i.value.length} / 500`,s.style.color=i.value.length>450?"#f59e0b":"#475569"}),document.getElementById("lite-send-btn")?.addEventListener("click",async()=>{const n=document.getElementById("lite-contact-name")?.value||"",r=document.getElementById("lite-contact-email")?.value||"",a=document.getElementById("lite-contact-msg")?.value||"",b=document.getElementById("lite-send-btn"),g=document.getElementById("lite-send-label"),m=document.getElementById("lite-status");k(["lite-contact-name","lite-contact-email","lite-contact-msg"]);const{valid:v,errors:p}=E({name:n,email:r,message:a});if(!v){p.name&&x(document.getElementById("lite-contact-name"),p.name),p.email&&x(document.getElementById("lite-contact-email"),p.email),p.message&&x(i,p.message),f(p.name||p.email||p.message,"#ef4444");return}b.disabled=!0,b.style.opacity="0.7",b.style.cursor="not-allowed",g&&(g.textContent="Sending... ⏳"),m&&(m.textContent="Sending...");const h=await w({name:n,email:r,message:a});b.disabled=!1,b.style.opacity="1",b.style.cursor="pointer",h.ok?(h.via==="ajax"?(f("Message sent! I'll reply soon ✨","#10b981"),m&&(m.textContent="✅ Sent! Check dianferdi01@gmail.com",m.style.color="#10b981")):(f("Opening email app — message ready ✉️","#0ea5e9"),m&&(m.textContent="📧 Email app opened",m.style.color="#0ea5e9")),document.getElementById("lite-contact-name").value="",document.getElementById("lite-contact-email").value="",i.value="",s&&(s.textContent="0 / 500"),g&&(g.textContent="Sent! ✅"),setTimeout(()=>{g&&(g.textContent="Send Message 🚀"),m&&(m.textContent="")},3e3)):(f("Failed, but saved locally. Try again ✨","#f59e0b"),m&&(m.textContent="⚠️ Saved locally",m.style.color="#f59e0b"),g&&(g.textContent="Send Message 🚀"))})}};class L extends u.Scene{constructor(){super({key:y.MAIN_MENU}),this._menuEl=null,this._playerName="Guest",this._muted=!1}create(){const{width:e,height:t}=this.scale;document.getElementById("hud")?.remove(),document.getElementById("virtual-dpad")?.remove(),document.getElementById("btn-action")?.remove(),document.getElementById("btn-jump")?.remove(),document.getElementById("interaction-indicator")?.classList.add("hidden");const c=document.getElementById("game-container");c&&(c.classList.remove("hidden"),c.style.display="flex",c.style.zIndex="5"),this.sound.mute=l.isMuted(),this._createBackground(e,t),this._muted=l.isMuted(),l.init(this),this._buildMenu(),this.time.delayedCall(300,()=>{this.scene.isActive(y.MAIN_MENU)&&(l._bgm&&l._bgm.key!=="bgm_menu"&&l.stopAllImmediate(),l.playBGM(this,"bgm_menu",{volume:.35}))}),this.events.once("shutdown",()=>{this._menuEl?.remove(),this._menuEl=null,this.time.removeAllEvents()})}_createBackground(e,t){this.add.rectangle(e/2,t/2,e,t,986906);for(let i=0;i<80;i++){const s=u.Math.Between(0,e),n=u.Math.Between(0,t),r=u.Math.FloatBetween(.5,2),a=u.Math.FloatBetween(.3,1),b=this.add.circle(s,n,r,16777215,a);this.tweens.add({targets:b,alpha:{from:a,to:.1},duration:u.Math.Between(800,2500),yoyo:!0,repeat:-1,delay:u.Math.Between(0,2e3),ease:"Sine.easeInOut"})}["{ }","< />","01","#!/","npm","git"].forEach((i,s)=>{const n=u.Math.Between(40,e-40),r=u.Math.Between(40,t-40),a=this.add.text(n,r,i,{fontFamily:"'Press Start 2P', monospace",fontSize:"6px",color:"#2a2a4a",alpha:.5}).setOrigin(.5);this.tweens.add({targets:a,y:r-20,alpha:.15,duration:3e3+s*400,yoyo:!0,repeat:-1,ease:"Sine.easeInOut",delay:s*300})})}_buildMenu(){this._menuEl&&this._menuEl.remove();const e=document.createElement("div");e.id="main-menu",e.innerHTML=`
+    `},_bindEvents(){document.getElementById("hud")?.remove(),document.getElementById("virtual-dpad")?.remove(),document.getElementById("btn-action")?.remove(),document.getElementById("btn-jump")?.remove(),document.getElementById("interaction-indicator")?.classList.add("hidden");try{window.__devquest?.scene?.pause("MainMenuScene")}catch{}try{window.__devquest?.scene?.pause("WorldScene")}catch{}try{window.__devquest?.scene?.pause("UIScene")}catch{}try{const t=window.__devquest;t?.input&&(t.input.keyboard&&(t.input.keyboard.enabled=!1),t.input.mouse&&(t.input.mouse.enabled=!1),t.input.touch&&(t.input.touch.enabled=!1)),t?.scene?.scenes?.forEach(i=>{i.input?.keyboard&&(i.input.keyboard.enabled=!1),i.input?.mouse&&(i.input.mouse.enabled=!1),i.input?.touch&&(i.input.touch.enabled=!1)}),document.documentElement.style.overscrollBehavior="auto",document.body.style.overscrollBehavior="auto",document.documentElement.style.touchAction="auto",document.body.style.touchAction="auto"}catch{}const n=t=>{t&&["keydown","keyup","keypress"].forEach(i=>{t.addEventListener(i,a=>a.stopPropagation())})};n(document.getElementById("lite-contact-name")),n(document.getElementById("lite-contact-email")),n(document.getElementById("lite-contact-msg")),n(document.getElementById("player-name-input"));const e=document.getElementById("lite-bgm"),o=document.getElementById("lite-bgm-toggle"),c=document.getElementById("lite-bgm-vol");if(e){const t=localStorage.getItem("devquest_muted")==="true";e.volume=(c?.value||30)/100,e.muted=t,o&&(o.textContent=t?"🔇 BGM: OFF":"🔊 BGM: ON");const i=()=>{localStorage.getItem("devquest_muted")!=="true"&&e.play().catch(()=>{})};setTimeout(i,800),window.addEventListener("click",i,{once:!0}),o?.addEventListener("click",()=>{e.muted=!e.muted,localStorage.setItem("devquest_muted",e.muted),o.textContent=e.muted?"🔇 BGM: OFF":"🔊 BGM: ON",e.muted||e.play().catch(()=>{})}),c?.addEventListener("input",a=>{e.volume=a.target.value/100,e.muted&&e.volume>0&&(e.muted=!1,localStorage.setItem("devquest_muted","false"),o.textContent="🔊 BGM: ON")})}document.getElementById("lite-back-game-btn")?.addEventListener("click",()=>{document.body.classList.remove("lite-mode"),document.documentElement.classList.remove("lite-mode"),document.body.style.overflow="hidden";try{document.getElementById("lite-bgm")?.pause()}catch{}window.location.reload()}),document.getElementById("lite-copy-email")?.addEventListener("click",async function(){try{await navigator.clipboard.writeText(d.email),this.textContent="✅ Copied!",this.style.background="rgba(16,185,129,0.2)",this.style.borderColor="rgba(16,185,129,0.5)",this.style.color="#34d399",f("Email copied! 📋","#10b981"),setTimeout(()=>{this.innerHTML="📋 Copy Email",this.style.background="rgba(251,191,36,0.1)",this.style.borderColor="rgba(251,191,36,0.3)",this.style.color="#fbbf24"},2e3)}catch{const t=document.createElement("textarea");t.value=d.email,document.body.appendChild(t),t.select(),document.execCommand("copy"),t.remove(),f("Email copied! 📋","#10b981")}});const r=document.getElementById("lite-contact-msg"),s=document.getElementById("lite-char-count");r&&s&&r.addEventListener("input",()=>{s.textContent=`${r.value.length} / 500`,s.style.color=r.value.length>450?"#f59e0b":"#475569"}),document.getElementById("lite-send-btn")?.addEventListener("click",async()=>{const t=document.getElementById("lite-contact-name")?.value||"",i=document.getElementById("lite-contact-email")?.value||"",a=document.getElementById("lite-contact-msg")?.value||"",b=document.getElementById("lite-send-btn"),g=document.getElementById("lite-send-label"),m=document.getElementById("lite-status");k(["lite-contact-name","lite-contact-email","lite-contact-msg"]);const{valid:v,errors:p}=E({name:t,email:i,message:a});if(!v){p.name&&h(document.getElementById("lite-contact-name"),p.name),p.email&&h(document.getElementById("lite-contact-email"),p.email),p.message&&h(r,p.message),f(p.name||p.email||p.message,"#ef4444");return}b.disabled=!0,b.style.opacity="0.7",b.style.cursor="not-allowed",g&&(g.textContent="Sending... ⏳"),m&&(m.textContent="Sending...");const x=await w({name:t,email:i,message:a});b.disabled=!1,b.style.opacity="1",b.style.cursor="pointer",x.ok?(x.via==="ajax"?(f("Message sent! I'll reply soon ✨","#10b981"),m&&(m.textContent="✅ Sent! Check dianferdi01@gmail.com",m.style.color="#10b981")):(f("Opening email app — message ready ✉️","#0ea5e9"),m&&(m.textContent="📧 Email app opened",m.style.color="#0ea5e9")),document.getElementById("lite-contact-name").value="",document.getElementById("lite-contact-email").value="",r.value="",s&&(s.textContent="0 / 500"),g&&(g.textContent="Sent! ✅"),setTimeout(()=>{g&&(g.textContent="Send Message 🚀"),m&&(m.textContent="")},3e3)):(f("Failed, but saved locally. Try again ✨","#f59e0b"),m&&(m.textContent="⚠️ Saved locally",m.style.color="#f59e0b"),g&&(g.textContent="Send Message 🚀"))})}};class j extends u.Scene{constructor(){super({key:y.MAIN_MENU}),this._menuEl=null,this._playerName="Guest",this._muted=!1}create(){const{width:e,height:o}=this.scale;document.getElementById("hud")?.remove(),document.getElementById("virtual-dpad")?.remove(),document.getElementById("btn-action")?.remove(),document.getElementById("btn-jump")?.remove(),document.getElementById("interaction-indicator")?.classList.add("hidden");const c=document.getElementById("game-container");c&&(c.classList.remove("hidden"),c.style.display="flex",c.style.zIndex="5"),this.sound.mute=l.isMuted(),this._createBackground(e,o),this._muted=l.isMuted(),l.init(this),this._buildMenu(),this.time.delayedCall(300,()=>{this.scene.isActive(y.MAIN_MENU)&&(l._bgm&&l._bgm.key!=="bgm_menu"&&l.stopAllImmediate(),l.playBGM(this,"bgm_menu",{volume:.35}))}),this.events.once("shutdown",()=>{this._menuEl?.remove(),this._menuEl=null,this.time.removeAllEvents()})}_createBackground(e,o){this.add.rectangle(e/2,o/2,e,o,986906);for(let r=0;r<80;r++){const s=u.Math.Between(0,e),t=u.Math.Between(0,o),i=u.Math.FloatBetween(.5,2),a=u.Math.FloatBetween(.3,1),b=this.add.circle(s,t,i,16777215,a);this.tweens.add({targets:b,alpha:{from:a,to:.1},duration:u.Math.Between(800,2500),yoyo:!0,repeat:-1,delay:u.Math.Between(0,2e3),ease:"Sine.easeInOut"})}["{ }","< />","01","#!/","npm","git"].forEach((r,s)=>{const t=u.Math.Between(40,e-40),i=u.Math.Between(40,o-40),a=this.add.text(t,i,r,{fontFamily:"'Press Start 2P', monospace",fontSize:"6px",color:"#2a2a4a",alpha:.5}).setOrigin(.5);this.tweens.add({targets:a,y:i-20,alpha:.15,duration:3e3+s*400,yoyo:!0,repeat:-1,ease:"Sine.easeInOut",delay:s*300})})}_buildMenu(){this._menuEl&&this._menuEl.remove();const e=document.createElement("div");e.id="main-menu",e.innerHTML=`
       <div class="menu-wrapper">
         <!-- Logo / Title — FERDI DEVELOPER -->
         <div class="menu-title-block">
@@ -387,7 +402,7 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
           Made with ♥ by ${d.name} &bull; Ferdi Developer
         </p>
       </div>
-    `,this._applyMenuStyles(e),document.getElementById("app").appendChild(e),this._menuEl=e;const t=document.getElementById("game-container");t.style.zIndex="5",this._bindMenuEvents()}_applyMenuStyles(e){const t=document.createElement("style");t.textContent=`
+    `,this._applyMenuStyles(e),document.getElementById("app").appendChild(e),this._menuEl=e;const o=document.getElementById("game-container");o.style.zIndex="5",this._bindMenuEvents()}_applyMenuStyles(e){const o=document.createElement("style");o.textContent=`
       #main-menu {
         position: fixed;
         inset: 0;
@@ -550,7 +565,7 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
         color: #334155;
         text-align: center;
       }
-    `,e.appendChild(t)}_bindMenuEvents(){const e=document.getElementById("player-name-input"),t=document.getElementById("btn-start-game"),c=document.getElementById("btn-lite-mode"),i=document.getElementById("btn-instructions"),s=document.getElementById("btn-skip-name"),n=document.getElementById("btn-mute-menu"),r=()=>e.value.trim().replace(/[<>"']/g,"").slice(0,12)||"Guest";t.addEventListener("click",()=>{this._playerName=r(),this._startGame()}),s.addEventListener("click",()=>{this._playerName="Guest",e.value=""}),c.addEventListener("click",()=>{this._menuEl.remove(),document.body.classList.add("lite-mode"),document.documentElement.classList.add("lite-mode"),document.body.style.overflow="auto",document.documentElement.style.overflow="auto";const a=document.getElementById("game-container");a&&(a.style.display="none",a.classList.add("hidden")),l.stopAllImmediate();try{this.sound.stopAll()}catch{}C.render(document.getElementById("app")),window.scrollTo(0,0)}),i.addEventListener("click",()=>this._showInstructions()),n.addEventListener("click",()=>{const a=l.toggle();this._muted=a,n.textContent=a?"🔇":"🔊",!a&&!l._bgm?.isPlaying&&l.playBGM(this,"bgm_menu",{volume:.35}),l.playSFX(this,"sfx_interact")}),e.addEventListener("keydown",a=>{a.key==="Enter"&&t.click()})}_startGame(){l.playSFX(this,"sfx_open"),l.stopAllImmediate(),this.registry.set("playerName",this._playerName),this.registry.set("muted",this._muted);const e=document.getElementById("game-container");e.classList.remove("hidden"),e.style.zIndex="10",this._menuEl&&(this._menuEl.style.transition="opacity 0.2s",this._menuEl.style.opacity="0",setTimeout(()=>{this._menuEl?.remove(),this._menuEl=null},220)),setTimeout(()=>{try{this.scene.start(y.WORLD)}catch{}try{this.scene.start(y.UI)}catch{}},50)}_showInstructions(){if(document.getElementById("instructions-modal"))return;const t=document.createElement("div");t.id="instructions-modal",t.className="modal-backdrop",t.innerHTML=`
+    `,e.appendChild(o)}_bindMenuEvents(){const e=document.getElementById("player-name-input"),o=document.getElementById("btn-start-game"),c=document.getElementById("btn-lite-mode"),r=document.getElementById("btn-instructions"),s=document.getElementById("btn-skip-name"),t=document.getElementById("btn-mute-menu"),i=()=>e.value.trim().replace(/[<>"']/g,"").slice(0,12)||"Guest";o.addEventListener("click",()=>{this._playerName=i(),this._startGame()}),s.addEventListener("click",()=>{this._playerName="Guest",e.value=""}),c.addEventListener("click",()=>{this._menuEl.remove(),document.body.classList.add("lite-mode"),document.documentElement.classList.add("lite-mode"),document.body.style.overflow="auto",document.documentElement.style.overflow="auto";const a=document.getElementById("game-container");a&&(a.style.display="none",a.classList.add("hidden")),l.stopAllImmediate();try{this.sound.stopAll()}catch{}_.render(document.getElementById("app")),window.scrollTo(0,0)}),r.addEventListener("click",()=>this._showInstructions()),t.addEventListener("click",()=>{const a=l.toggle();this._muted=a,t.textContent=a?"🔇":"🔊",!a&&!l._bgm?.isPlaying&&l.playBGM(this,"bgm_menu",{volume:.35}),l.playSFX(this,"sfx_interact")}),e.addEventListener("keydown",a=>{a.key==="Enter"&&o.click()})}_startGame(){l.playSFX(this,"sfx_open"),l.stopAllImmediate(),this.registry.set("playerName",this._playerName),this.registry.set("muted",this._muted);const e=document.getElementById("game-container");e.classList.remove("hidden"),e.style.zIndex="10",this._menuEl&&(this._menuEl.style.transition="opacity 0.2s",this._menuEl.style.opacity="0",setTimeout(()=>{this._menuEl?.remove(),this._menuEl=null},220)),setTimeout(()=>{try{this.scene.start(y.WORLD)}catch{}try{this.scene.start(y.UI)}catch{}},50)}_showInstructions(){if(document.getElementById("instructions-modal"))return;const o=document.createElement("div");o.id="instructions-modal",o.className="modal-backdrop",o.innerHTML=`
       <div class="modal-panel glass-card" style="max-width:500px;padding:2rem;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
           <h2 class="pixel-font" style="font-size:12px;color:#7c3aed;">CONTROLS</h2>
@@ -592,4 +607,4 @@ import{P as u}from"./phaser-DBy6FrJS.js";import{SCENE_KEYS as y}from"./gameConfi
         border-radius: 4px; padding: 2px 6px; font-size: 0.7rem;
         color: #e2e8f0; font-family: monospace; white-space: nowrap;
       }
-    `,t.appendChild(c),document.getElementById("modal-portal").appendChild(t);const i=()=>t.remove();document.getElementById("close-instr").addEventListener("click",i),t.addEventListener("click",n=>{n.target===t&&i()});const s=n=>{n.key==="Escape"&&(i(),document.removeEventListener("keydown",s))};document.addEventListener("keydown",s)}}export{L as default};
+    `,o.appendChild(c),document.getElementById("modal-portal").appendChild(o);const r=()=>o.remove();document.getElementById("close-instr").addEventListener("click",r),o.addEventListener("click",t=>{t.target===o&&r()});const s=t=>{t.key==="Escape"&&(r(),document.removeEventListener("keydown",s))};document.addEventListener("keydown",s)}}export{j as default};

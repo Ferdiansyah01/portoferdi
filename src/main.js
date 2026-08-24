@@ -60,7 +60,13 @@ async function renderBootShell() {
 
   shell.remove();
 
-  // ── Phaser Game Config ─────────────────────────────────────────────
+  // ── Phaser Game Config — adaptive for mobile ────────────────────────
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth < 768;
+  const mobileZoom = isMobile ? 2 : gameConfig.ZOOM;
+  // mobile pakai viewport penuh biar canvas pas di layar
+  const baseW = gameConfig.MAP_WIDTH  * gameConfig.TILE_SIZE * mobileZoom;
+  const baseH = gameConfig.MAP_HEIGHT * gameConfig.TILE_SIZE * mobileZoom;
+
   const config = {
     type: Phaser.AUTO,
     parent: 'game-container',
@@ -68,25 +74,35 @@ async function renderBootShell() {
     scale: {
       mode:       Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
-      width:      gameConfig.MAP_WIDTH  * gameConfig.TILE_SIZE * gameConfig.ZOOM,
-      height:     gameConfig.MAP_HEIGHT * gameConfig.TILE_SIZE * gameConfig.ZOOM,
+      width:      baseW,
+      height:     baseH,
       min: { width: 320,  height: 240 },
       max: { width: 2560, height: 1440 },
+      // jaga aspect di mobile notch & keyboard
+      expandParent: false,
     },
     physics: {
       default: 'arcade',
       arcade: {
         gravity: { y: 0 },
-        debug: false,   // Set true to visualize hitboxes during development
+        debug: false,
       },
     },
     dom: {
       createContainer: true,
     },
+    // input: prevent default hanya untuk game keys, biar input text tetep bisa
+    input: {
+      keyboard: { target: window },
+      mouse: { preventDefaultMove: false },
+      touch: { capture: true },
+    },
     scene: [BootScene, MainMenuScene, WorldScene, UIScene],
     pixelArt: true,
     antialias: false,
     roundPixels: true,
+    // expose zoom for scenes
+    customMobileZoom: mobileZoom,
   };
 
   // Make game container visible
@@ -97,6 +113,26 @@ async function renderBootShell() {
 
   // Instantiate Phaser
   const game = new Phaser.Game(config);
+
+  // Mobile: handle orientation / resize
+  window.addEventListener('resize', () => { try { game.scale.refresh(); } catch {} });
+  window.addEventListener('orientationchange', () => { setTimeout(() => { try { game.scale.refresh(); } catch {} }, 300); });
+  // prevent double-tap zoom on game — jangan block 2-finger scroll di Lite Mode
+  document.addEventListener('touchstart', (e) => {
+    if (document.body.classList.contains('lite-mode')) return;
+    if (e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+  let lastTouch = 0;
+  document.addEventListener('touchend', (e) => {
+    if (document.body.classList.contains('lite-mode')) return;
+    const now = Date.now();
+    if (now - lastTouch <= 300) e.preventDefault();
+    lastTouch = now;
+  }, { passive: false });
+  // allow wheel/touchpad scroll in Lite Mode — Phaser capture jangan ditahan
+  window.addEventListener('wheel', (e) => {
+    if (document.body.classList.contains('lite-mode')) e.stopPropagation();
+  }, { passive: true });
 
   // Expose for debugging
   window.__devquest = game;
